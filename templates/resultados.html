@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+    <title>Resultados de la Búsqueda</title>
+</head>
+<body>
+    <h1>Resultados de la Búsqueda</h1>
+    <p>Sensibilidad: {{ sensibilidad }}%</p>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Nombre Completo</th>
+            <th>Puntuación</th>
+        </tr>
+        {% for resultado in resultados %}
+        <tr>
+            <td>{{ resultado.ID }}</td>
+            <td>{{ resultado['Nombre Completo'] }}</td>
+            <td>{{ resultado.puntuacion }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
