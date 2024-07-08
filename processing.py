@@ -44,7 +44,7 @@ def encontrar_mejor_coincidencia(personas_df, nombre, itera, umbral):
     if not personas_coincidentes.empty and itera < 2:
         personas_coincidentes['tamaño'] = personas_coincidentes['Nombre Completo'].apply(len)
         max_similitud = personas_coincidentes['similitud'].max()
-        filtered_personas = personas_coincidentes[personas_coincidentes['similitud'] >= max_similitud - 1.2]
+        filtered_personas = personas_coincidentes[personas_coincidentes['similitud'] >= umbral+2.5]
         sorted_personas = filtered_personas.sort_values(by=['tamaño', 'similitud'], ascending=[False, False])
         if sorted_personas.iloc[0]['tamaño'] > len(nombre):
             personas_coincidentes = encontrar_mejor_coincidencia(personas_df, sorted_personas.iloc[0]['Nombre Completo'], 2, umbral + 2.5)
