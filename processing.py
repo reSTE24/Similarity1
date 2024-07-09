@@ -1,6 +1,7 @@
 import pandas as pd
 import unicodedata
 import jellyfish
+import streamlit as st
 from rapidfuzz import fuzz
 from helpers import transformar_cadena
 
@@ -45,7 +46,7 @@ def encontrar_mejor_coincidencia(personas_df, nombre, itera, umbral):
         personas_coincidentes = personas_df[personas_df['similitud'] >= umbral + 2.5].sort_values(by='similitud', ascending=False)
         personas_coincidentes['tamaño'] = personas_coincidentes['Nombre Completo'].apply(len)
         sorted_personas = personas_coincidentes.sort_values(by='tamaño', ascending=False)
-        if sorted_personas.iloc[0]['tamaño'] > len(nombre):
+        if not sorted_personas.empty  and sorted_personas.iloc[0]['tamaño'] > len(nombre):
             personas_coincidentes = encontrar_mejor_coincidencia(personas_df, sorted_personas.iloc[0]['Nombre Completo'], 2, umbral + 2.5)
 
     return personas_coincidentes
