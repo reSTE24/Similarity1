@@ -4,6 +4,7 @@ import jellyfish
 import streamlit as st
 from rapidfuzz import fuzz
 from helpers import transformar_cadena
+from joblib import Parallel, delayed
 
 def calcular_puntuacion(fila):
     puntuacion = 0
@@ -34,20 +35,26 @@ def encontrar_mejor_coincidencia(personas_df, nombre, itera, umbral):
         promedio_palabra_similitud = sum(palabra_similitudes) / len(palabra_similitudes)
         errores_ortograficos1 = 100 * jellyfish.jaro_winkler_similarity(nombre, nombreFuente)
         if promedio_palabra_similitud - errores_ortograficos1 > 7:
-            errores_ortograficos1 = fuzz.token_sort_ratio(nombre, nombreFuente)
+            errores_ortograficos1 = max(fuzz.token_sort_ratio(nombre, nombreFuente),fuzz.partial_token_sort_ratio(nombre, nombreFuente))
         penalizacion = (100 - errores_ortograficos1) / 4
         puntuacion_final = promedio_palabra_similitud - penalizacion
         return puntuacion_final
-
-    personas_df['similitud'] = personas_df['Nombre Completo'].apply(calcular_similitud)
+    personas_df['similitud'] = Parallel(n_jobs=-1)(delayed(calcular_similitud)(nombre) for nombre in personas_df['Nombre Completo'])
+    # personas_df['similitud'] = personas_df['Nombre Completo'].apply(calcular_similitud)
     personas_coincidentes = personas_df[personas_df['similitud'] >= umbral].sort_values(by='similitud', ascending=False)
 
     if not personas_coincidentes.empty and itera < 2:
-        personas_coincidentes = personas_df[personas_df['similitud'] >= umbral + 2.5].sort_values(by='similitud', ascending=False)
-        personas_coincidentes['tamaño'] = personas_coincidentes['Nombre Completo'].apply(len)
-        sorted_personas = personas_coincidentes.sort_values(by='tamaño', ascending=False)
+        new_umbral=personas_coincidentes.iloc[0]['similitud']
+        if new_umbral <90:
+            new_umbral=90
+        new_umbral=new_umbral-new_umbral*7.5/100
+        new_personas_coincidentes = personas_coincidentes[personas_coincidentes['similitud'] >=new_umbral].sort_values(by='similitud', ascending=False)
+        new_personas_coincidentes['tamaño'] = new_personas_coincidentes['Nombre Completo'].apply(len)
+        sorted_personas = new_personas_coincidentes.sort_values(by='tamaño', ascending=False)
         if not sorted_personas.empty  and sorted_personas.iloc[0]['tamaño'] > len(nombre):
             personas_coincidentes = encontrar_mejor_coincidencia(personas_df, sorted_personas.iloc[0]['Nombre Completo'], 2, umbral + 2.5)
+        else:
+            personas_coincidentes = personas_df[personas_df['similitud'] >=umbral+2.5].sort_values(by='similitud', ascending=False)
 
     return personas_coincidentes
 
