@@ -19,6 +19,15 @@ def calcular_puntuacion(fila):
     puntuacion += no_vacios / total_columnas
     return puntuacion
 
+def seleccionar_columana(nombre,columnas):
+    # Calcula las similitudes y almacena en una lista de tuplas (nombre_columna, similitud)
+    similitudes = [(nombre_columna, fuzz.token_sort_ratio(nombre_columna, nombre)) for nombre_columna in columnas]
+    
+    # Encuentra la tupla con la similitud máxima
+    nombre_columna_max_similitud, _ = max(similitudes, key=lambda x: x[1])
+
+    return nombre_columna_max_similitud
+
 def encontrar_mejor_coincidencia(personas_df, nombre, itera, umbral):
 
     nombre = transformar_cadena(nombre)
@@ -68,8 +77,8 @@ def seleccionar_mejor_opcion(df, nombre):
         resultado = {"ID": None, "Nro. Documento": None, "Nombre Elegido": nombre, "Cantidad de repetidos": 0, "Resultado": "Nuevo"}
     else:
         coincidencia = coincidencia.sort_values(by='puntuacion', ascending=False)
-        mejor_fila =  coincidencia.iloc[0].iloc[0]
-        segunda_mejor_fila = coincidencia.iloc[1].iloc[0] if len(coincidencia) > 1 else None
+        mejor_fila =  coincidencia.iloc[0]
+        segunda_mejor_fila = coincidencia.iloc[1] if len(coincidencia) > 1 else None
 
         if segunda_mejor_fila is not None:
             if mejor_fila['puntuacion'] >= 8 and segunda_mejor_fila['puntuacion'] >= 8:
@@ -101,13 +110,14 @@ def seleccionar_mejor_opcion(df, nombre):
     return resultado
 
 def grabar(df_resultado, quejas_df):
-    plantilla_df = pd.read_excel('Plantilla.xlsx')
-    quejas_df.columns = [''] + list(plantilla_df.columns[6:])
-    mes_df = plantilla_df.copy()
-    common_columns = quejas_df.columns.intersection(mes_df.columns)
-    common_columns2 = df_resultado.columns.intersection(mes_df.columns)
-    mes_df[common_columns] = quejas_df[common_columns]
-    mes_df[common_columns2] = df_resultado[common_columns2]
+    mes_df = pd.concat([df_resultado, quejas_df], axis=1)
+    # plantilla_df = pd.read_excel('Plantilla.xlsx')
+    # quejas_df.columns = [''] + list(plantilla_df.columns[6:])
+    # mes_df = plantilla_df.copy()
+    # common_columns = quejas_df.columns.intersection(mes_df.columns)
+    # common_columns2 = df_resultado.columns.intersection(mes_df.columns)
+    # mes_df[common_columns] = quejas_df[common_columns]
+    # mes_df[common_columns2] = df_resultado[common_columns2]
     csv = mes_df.to_csv(index=False)
 
     st.download_button(label="Descargar datos como CSV", data=csv, file_name='nombreArchivoQueja.csv', mime='text/csv')

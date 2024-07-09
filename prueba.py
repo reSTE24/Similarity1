@@ -16,7 +16,8 @@ df = df[['ID', 'Nro. Documento', 'puntuacion', 'Nombre Completo']]
 
 # print(encontrar_mejor_coincidencia(df, "QUISPE  TORRES WILBER", 2, 90))
 
-print(encontrar_mejor_coincidencia(df, "VALDIVIA  HILARIO VLADIMIR", 1, 85))
+# print(encontrar_mejor_coincidencia(df, "VALDIVIA  HILARIO VLADIMIR", 1, 85))
+print(seleccionar_mejor_opcion(df, "VALDIVIA  HILARIO VLADIMIR"))
 
 
 # print(100 * jellyfish.jaro_winkler_similarity( "TORRES QUISPE WILDER ESTEBAN","TORRES QUISPE WILDER"))
