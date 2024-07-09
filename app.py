@@ -23,17 +23,13 @@ if opcion_v2 == "Subir archivo y buscar coincidencias V2":
     id_col_personas = 'ID'
     dni_col = 'Nro. Documento'
     nombre_col_personas = 'Nombre Completo'
-    # nombre_col_quejas = 'Nombre Titular'
     
-
-
     uploaded_file = st.file_uploader("Elige un archivo CSV", type="csv")
     sensibilidad = st.slider('Sensibilidad', 0, 100, 90, 1)
     busqueda = st.text_input('Buscar...')
 
     if uploaded_file is not None:
         df = pd.read_csv(uploaded_file)
-        # df = pd.read_csv('./Personas (3).csv')
         df['puntuacion'] = df.apply(calcular_puntuacion, axis=1)
         df = df[[id_col_personas, dni_col, 'puntuacion', nombre_col_personas]]
         df[nombre_col_personas] = df[nombre_col_personas].str.upper().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8').str.strip()
@@ -54,7 +50,6 @@ elif opcion_v2 == "Subir archivo y procesar quejas V2":
 
     if uploaded_file is not None and quejas is not None:
         df = pd.read_csv(uploaded_file)
-        # df = pd.read_csv('./Personas (3).csv')
         df['puntuacion'] = df.apply(calcular_puntuacion, axis=1)
         df = df[['ID', 'Nro. Documento', 'puntuacion', 'Nombre Completo']]
         df['Nombre Completo'] = df['Nombre Completo'].str.upper().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8').str.strip()
@@ -77,10 +72,8 @@ elif opcion_v2 == "Comprobar quejas V2":
 
     if uploaded_file is not None and quejas is not None:
         df = pd.read_csv(uploaded_file)
-        # df = pd.read_csv('./Personas (3).csv')
         df['puntuacion'] = df.apply(calcular_puntuacion, axis=1)
         df = df[['ID', 'Nro. Documento', 'puntuacion', 'Nombre Completo']]
-        # df['Nombre Completo'] = df['Nombre Completo'].str.upper().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8').str.strip()
         st.write('Archivo cargado exitosamente')
 
         quejas_df = pd.read_csv(quejas)

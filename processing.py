@@ -111,13 +111,6 @@ def seleccionar_mejor_opcion(df, nombre):
 
 def grabar(df_resultado, quejas_df):
     mes_df = pd.concat([df_resultado, quejas_df], axis=1)
-    # plantilla_df = pd.read_excel('Plantilla.xlsx')
-    # quejas_df.columns = [''] + list(plantilla_df.columns[6:])
-    # mes_df = plantilla_df.copy()
-    # common_columns = quejas_df.columns.intersection(mes_df.columns)
-    # common_columns2 = df_resultado.columns.intersection(mes_df.columns)
-    # mes_df[common_columns] = quejas_df[common_columns]
-    # mes_df[common_columns2] = df_resultado[common_columns2]
     csv = mes_df.to_csv(index=False)
 
     st.download_button(label="Descargar datos como CSV", data=csv, file_name='nombreArchivoQueja.csv', mime='text/csv')
