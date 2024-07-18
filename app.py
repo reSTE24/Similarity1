@@ -44,7 +44,7 @@ if opcion_v2 == "Subir archivo y buscar coincidencias V2":
 elif opcion_v2 == "Subir archivo y procesar quejas V2":
     st.title('Subir archivo CSV de personas y sus quejas y reclamos V2')
     st.write('Sube un archivo CSV de personas y un Excel de quejas y reclamos.')
-
+    sensibilidad = st.slider('Sensibilidad', 0, 100, 90, 1)
     uploaded_file = st.file_uploader("Elige un archivo CSV", type="csv")
     quejas = st.file_uploader("Elige un archivo Hoja de cálculo", type="xlsx")
 
@@ -58,7 +58,7 @@ elif opcion_v2 == "Subir archivo y procesar quejas V2":
         quejas_df = pd.read_excel(quejas)
         nombre_col_quejas =   seleccionar_columana('Nombre Titular',quejas_df.columns)
         
-        resultados = [seleccionar_mejor_opcion(df, nombre) for nombre in quejas_df[nombre_col_quejas]]
+        resultados = [seleccionar_mejor_opcion(df, nombre,sensibilidad) for nombre in quejas_df[nombre_col_quejas]]
         df_resultados = pd.DataFrame(resultados)
         
         grabar(df_resultados, quejas_df)
@@ -66,7 +66,7 @@ elif opcion_v2 == "Subir archivo y procesar quejas V2":
 elif opcion_v2 == "Comprobar quejas V2":
     st.title('Subir archivo CSV de personas y sus quejas y reclamos V2')
     st.write('Sube un archivo CSV de personas y un CSV de quejas y reclamos.')
-
+    sensibilidad = st.slider('Sensibilidad', 0, 100, 90, 1)
     uploaded_file = st.file_uploader("Elige un archivo CSV", type="csv")
     quejas = st.file_uploader("Elige un archivo Hoja de cálculo", type="csv")
 
@@ -79,7 +79,7 @@ elif opcion_v2 == "Comprobar quejas V2":
         quejas_df = pd.read_csv(quejas)
         nombre_col_quejas = 'Personas'
         
-        resultados = [seleccionar_mejor_opcion(df, nombre) for nombre in quejas_df[nombre_col_quejas]]
+        resultados = [seleccionar_mejor_opcion(df, nombre,sensibilidad) for nombre in quejas_df[nombre_col_quejas]]
         df_resultados = pd.DataFrame(resultados)
         
         csv = df_resultados.to_csv(index=False)
